@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+		<!-- Webpage Title -->
+    <title>Hello, world!</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+		<!-- JS -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script>
+      // 간단한 회원가입 함수입니다.
+      // 아이디, 비밀번호, 닉네임을 받아 DB에 저장합니다.
+      function register(){
+        $.ajax({
+          type: "POST",
+          url: "/api/register",
+          data: { id_give:$('#userid').val(), pw_give:$('#userpw').val(), nickname_give:$('#usernick').val() },
+          success: function(response){
+            if (response['result'] == 'success'){
+              alert('회원가입이 완료되었습니다.')
+              window.location.href='/login'
+            } else{
+              alert(response['msg'])
+            }
+          }
+        })
+      }
+
+    </script>
+  </head>
+  <body>
+    <h1>회원가입 페이지</h1>
+    <div>
+      <div class="form-group">
+        <label for="userid">ID</label>
+        <input type="text" class="form-control" id="userid" aria-describedby="emailHelp" placeholder="My ID">
+      </div>
+      <div class="form-group">
+        <label for="userpw">PW</label>
+        <input type="password" class="form-control" id="userpw" placeholder="My Password">
+      </div>
+      <div class="form-group">
+        <label for="userpw">NICKNAME</label>
+        <input type="text" class="form-control" id="usernick" placeholder="My Nickname">
+      </div>
+      <button class="btn btn-primary" onclick="register()">회원가입</button>
+    </div>
+  </body>
+</html>
