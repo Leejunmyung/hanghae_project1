@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <!-- Webpage Title -->
+    <title>Home | HanghaeMovie</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- Font Awesome CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+            show_movie();
+
+        });
+        function show_movie() {
+            $('#cards').empty()
+            $.ajax({
+                type: 'GET',
+                url: '/api/movies',
+                data: {},
+                success: function (response) {
+                    console.log(response['name'])
+
+                    let movies = response['movies']
+                    for (let i = 75; i < movies.length; i++) {
+                        let name = movies[i]['name']
+                        let image = movies[i]['img_url']
+                        let star = movies[i]['star']
+                        let info = movies[i]['info']
+                        let director = movies[i]['director']
+
+                        let movie_card = `<div class="movie-card">
+                                          <div class="movie-header" style="background-image: url(${image})">
+                                          </div>
+                                          <div class="movie-info">
+                                          <a class="movie-title" href="#">
+                                            <h2 class="card-title">${name}</h2>
+                                          </a>
+                                            <h5 class="card-text">개요: ${info} </h5>
+                                            <h5 class="card-text">평점: ${star} </h5>
+                                            <h5 class="card-text">감독: ${director}} </h5>
+                                          </div>
+                                          </div>`;
+                        $('#cards').append(movie_card);
+
+                    }
+
+                }
+
+            })
+        }
+    </script>
+    <style>
+        body {
+            background-color: black;
+            min-height: 100vh;
+            padding-top: 3.25rem;
+        }
+
+        .wrap {
+            width: auto;
+        }
+
+        .section {
+            padding: 1rem 1.5rem;
+            max-width: 750px;
+            margin: auto;
+        }
+
+        .is-sparta {
+            color: whitesmoke !important;
+        }
+
+
+        .modal-content {
+            width: 600px;
+            max-width: 80%;
+        }
+
+        input::-webkit-calendar-picker-indicator {
+            display: none;
+        }
+
+        .image img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-section {
+            margin-top: 70px;
+            margin-left: 50px;
+        }
+
+        .search-section {
+            margin-top: 30px;
+            margin-left: 50px;
+        }
+
+        .search-txt {
+            border-radius: 5px;
+            line-height: 30px;
+            width: 350px;
+            background-color: beige;
+            color: black;
+            font-family: 'Do Hyeon', sans-serif;
+
+        }
+
+        .movie-card {
+            width: 350px;
+            height: 650px;
+            margin-top: 30px;
+            margin-left: 20px;
+            margin-right: 50px;
+            margin-bottom: 20px;
+            border-style: solid;
+            border-color: white;
+            border-radius: 10px;
+
+        }
+
+        .movie-header {
+            width: 300px;
+            height: 450px;
+            background-size: cover;
+            margin-left: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .movie-info {
+            width: 300px;
+            height: 140px;
+            color: honeydew;
+            margin-top: 10px;
+            margin-left: 20px;
+            font-family: 'Do Hyeon', sans-serif;
+        }
+        .card-deck {
+            margin-left: 30px;
+        }
+    </style>
+
+</head>
+
+<body class="wrap">
+    <nav class="navbar is-fixed-top is-black" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <img src="https://ifh.cc/g/rvOiKR.png" height="100" width="50">
+                <strong class="is-sparta" style="font-family: 'Stylish', sans-serif;font-size: larger;">Hanghae
+                    Movie</strong>
+            </a>
+        </div>
+    </nav>
+    <div class="card-section">
+        <span class="tag is-info" style="width: 150px;height: 30px;font-size: 15px;">Ranking Movies</span>
+    </div>
+        <div class="card-deck" id="cards">
+            <div class="movie-card">
+                <div class="movie-header" style="background-image: url()">
+                </div>
+                <div class="movie-info">
+                    <a class="movie-title" href="#">
+                        <h2 class="card-title">ss</h2>
+                    </a>
+                    <h5 class="card-text">개요:  </h5>
+                    <h5 class="card-text">평점:  </h5>
+                    <h5 class="card-text">감독:  </h5>
+                </div>
+            </div>
+        </div>
+    <div class="search-section">
+        <span class="tag is-info" style="width: 150px;height: 30px;font-size: 15px;">Search Movies</span>
+        <div class="search-box">
+            <input type="text" class="search-txt" id="search_text" placeholder="찾는 영화를 입력하세요">
+            <button type="button" class="btn btn-danger" onclick="">🎥</button>
+        </div>
+    </div>
+</body>
+
+</html>
