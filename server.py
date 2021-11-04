@@ -37,6 +37,11 @@ def login():
     msg = request.args.get("msg")
     return render_template('hlogin.html', msg=msg)
 
+@app.route('/detail/<name>')
+def detail(name): # 영화목록 api
+    movies = db.movies.find_one({'name':name}, {'_id':False})
+    return render_template('detail.html', movies=movies)
+
 
 
 @app.route('/sign_in', methods=['POST'])
@@ -86,18 +91,17 @@ def check_dup(): # 아이디 중복확인
     return jsonify({'result': 'success', 'exists': exists})
 
 
-# @app.route('/api/movies', methods=['GET'])
-# def get_movies(): # 영화목록 api
-#     movies = list(db.movies.find({}, {'_id':False}))
-#     return jsonify({'movies':movies})
+# @app.route('/detail')
+# def get_movies():
+#     get = request.args.get('movie',type=str)
+#     movies = db.movies.find_one({'name':get}, {'_id':False})
+#     return render_template('detail.html', movies=movies)
+
 
 # @app.route('/api/search')
 # def search_movies():
 #     searchmovie = list(db.movies.find({}, {'_id':False}))
 #     return render_template("detail.html", searchmovie=searchmovie)
-
-
-
 
 
 if __name__ == '__main__':

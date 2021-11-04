@@ -33,7 +33,10 @@
             show_movie();
 
         });
-        
+
+        function log_out() {
+            window.location.href = "/login"
+        }
         function show_movie()   {
             $('#cards').empty();
             let movies = {{ movies|tojson }};
@@ -48,7 +51,7 @@
                                             <div class="movie-header" style="background-image: url(${image})">
                                             </div>
                                             <div class="movie-info">
-                                            <a class="movie-title" href="#">
+                                            <a class="movie-title" href="/detail/${name}">
                                                 <h2 class="card-title">${name}</h2>
                                             </a>
                                                 <h5 class="card-text">개요: ${info} </h5>
@@ -65,19 +68,19 @@
         for (let i=0; i<search.length;i++) {
             search_list.push(search[i]['name'])
         }
+        console.log(search)
         console.log(search_list)
 
         function search_movie() {
             $('#search-card').empty()
             let word = $('#search_text').val();
-            console.log(word)
             if (search_list.includes(word)){
                 let want = search_list.indexOf(word)
                 let movie_card = `<div class="movie-card">
                                             <div class="movie-header" style="background-image: url(${search[want]['img_url']})">
                                             </div>
                                             <div class="movie-info">
-                                            <a class="movie-title" href="#">
+                                            <a class="movie-title" href="/detail/${search[want]['name']}">
                                                 <h2 class="card-title">${search[want]['name']}</h2>
                                             </a>
                                                 <h5 class="card-text">개요: ${search[want]['info']} </h5>
@@ -222,8 +225,7 @@
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
                 <img src="https://ifh.cc/g/rvOiKR.png" height="100" width="50">
-                <strong class="is-hanghae" style="font-family: 'Stylish', sans-serif;font-size: larger;">Hanghae
-                    Movie</strong>
+                <strong class="is-hanghae" style="font-family: 'Stylish', sans-serif;font-size: larger;">Hanghae Movie</strong>
             </a>
         </div>
         <div class="navbar-end">
@@ -240,7 +242,7 @@
                   </a>
                 </p>
                 <p class="control">
-                  <a class="button is-danger" href="#">
+                  <a class="button is-danger" href="#" onclick="log_out()">
                     <span class="icon">
                       <i class="fa fa-sign-out"></i>
                     </span>
