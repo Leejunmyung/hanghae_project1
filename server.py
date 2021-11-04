@@ -2,6 +2,7 @@ from pymongo import MongoClient
 import jwt
 import datetime
 import hashlib
+import requests
 from flask import Flask, render_template, jsonify, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
@@ -20,10 +21,11 @@ db = client.dbsparta_plus
 @app.route('/')
 def home():
     token_receive = request.cookies.get('mytoken')
+    movies = list(db.movies.find({}, {'_id': False}))
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
 
-        return render_template('main.html')
+        return render_template('main.html', movies=movies)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
@@ -49,7 +51,7 @@ def sign_in():
     if result is not None:
         payload = {
          'id': username_receive,
-         'exp': datetime.utcnow() + timedelta(seconds=60)  # 로그인 24시간 유지
+         'exp': datetime.utcnow() + timedelta(seconds=60*60)  # 로그인 24시간 유지
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
 
@@ -72,7 +74,6 @@ def sign_up():
         "password": password_hash,  # 비밀번호
         "email": email_receive,
         "profile_name": username_receive,  # 프로필 이름 기본값은 아이디
-
     }
     db.users.insert_one(doc)
     return jsonify({'result': 'success'})
@@ -85,10 +86,18 @@ def check_dup(): # 아이디 중복확인
     return jsonify({'result': 'success', 'exists': exists})
 
 
-@app.route('/api/movies', methods=['GET'])
-def get_movies():
-    movies = list(db.movies.find({}, {'_id':False}))
-    return jsonify({'movies':movies})
+# @app.route('/api/movies', methods=['GET'])
+# def get_movies(): # 영화목록 api
+#     movies = list(db.movies.find({}, {'_id':False}))
+#     return jsonify({'movies':movies})
+
+# @app.route('/api/search')
+# def search_movies():
+#     searchmovie = list(db.movies.find({}, {'_id':False}))
+#     return render_template("detail.html", searchmovie=searchmovie)
+
+
+
 
 
 if __name__ == '__main__':

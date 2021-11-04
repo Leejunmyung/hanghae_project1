@@ -17,7 +17,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
     <!-- Font Awesome CSS -->
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-
+    <!-- google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+And+White+Picture&family=Do+Hyeon&family=Gugi&family=Jua&display=swap" rel="stylesheet">
     <!-- JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
@@ -30,49 +33,73 @@
             show_movie();
 
         });
-        function show_movie() {
-            $('#cards').empty()
-            $.ajax({
-                type: 'GET',
-                url: '/api/movies',
-                data: {},
-                success: function (response) {
-                    console.log(response['name'])
+        
+        function show_movie()   {
+            $('#cards').empty();
+            let movies = {{ movies|tojson }};
+            for (let i = 73; movies.length; i++){
+                let name = movies[i]['name']
+                let image = movies[i]['img_url']
+                let star = movies[i]['star'].slice(6)
+                let info = movies[i]['info']
+                let director = movies[i]['director']
 
-                    let movies = response['movies']
-                    for (let i = 75; i < movies.length; i++) {
-                        let name = movies[i]['name']
-                        let image = movies[i]['img_url']
-                        let star = movies[i]['star']
-                        let info = movies[i]['info']
-                        let director = movies[i]['director']
-
-                        let movie_card = `<div class="movie-card">
-                                          <div class="movie-header" style="background-image: url(${image})">
-                                          </div>
-                                          <div class="movie-info">
-                                          <a class="movie-title" href="#">
-                                            <h2 class="card-title">${name}</h2>
-                                          </a>
-                                            <h5 class="card-text">개요: ${info} </h5>
-                                            <h5 class="card-text">평점: ${star} </h5>
-                                            <h5 class="card-text">감독: ${director}} </h5>
-                                          </div>
-                                          </div>`;
-                        $('#cards').append(movie_card);
-
-                    }
-
-                }
-
-            })
+                let movie_card = `<div class="movie-card">
+                                            <div class="movie-header" style="background-image: url(${image})">
+                                            </div>
+                                            <div class="movie-info">
+                                            <a class="movie-title" href="#">
+                                                <h2 class="card-title">${name}</h2>
+                                            </a>
+                                                <h5 class="card-text">개요: ${info} </h5>
+                                                <h5 class="card-text">평점: ${star} </h5>
+                                                <h5 class="card-text">감독: ${director} </h5>
+                                            </div>
+                                            </div>`;
+                            $('#cards').append(movie_card);
+            }
         }
+
+        let search = {{ movies|tojson }};
+        let search_list = []
+        for (let i=0; i<search.length;i++) {
+            search_list.push(search[i]['name'])
+        }
+        console.log(search_list)
+
+        function search_movie() {
+            $('#search-card').empty()
+            let word = $('#search_text').val();
+            console.log(word)
+            if (search_list.includes(word)){
+                let want = search_list.indexOf(word)
+                let movie_card = `<div class="movie-card">
+                                            <div class="movie-header" style="background-image: url(${search[want]['img_url']})">
+                                            </div>
+                                            <div class="movie-info">
+                                            <a class="movie-title" href="#">
+                                                <h2 class="card-title">${search[want]['name']}</h2>
+                                            </a>
+                                                <h5 class="card-text">개요: ${search[want]['info']} </h5>
+                                                <h5 class="card-text">평점: ${search[want]['star']} </h5>
+                                                <h5 class="card-text">감독: ${search[want]['director']}} </h5>
+                                            </div>
+                                            </div>`;
+                $('#search-card').append(movie_card);
+            } else {
+                alert('없어요')
+            }
+
+        }
+        
+        
     </script>
     <style>
         body {
             background-color: black;
             min-height: 100vh;
             padding-top: 3.25rem;
+            padding-bottom: 400px;
         }
 
         .wrap {
@@ -85,7 +112,7 @@
             margin: auto;
         }
 
-        .is-sparta {
+        .is-hanghae {
             color: whitesmoke !important;
         }
 
@@ -108,29 +135,34 @@
         .card-section {
             margin-top: 70px;
             margin-left: 50px;
+            font-family: 'Jua', sans-serif;
         }
 
         .search-section {
             margin-top: 30px;
             margin-left: 50px;
         }
+        .search-box {
+            margin-top: 25px;
+            
+        }
 
         .search-txt {
             border-radius: 5px;
             line-height: 30px;
-            width: 350px;
+            width: 550px;
             background-color: beige;
             color: black;
-            font-family: 'Do Hyeon', sans-serif;
+            font-family: 'Jua', sans-serif;
 
         }
 
         .movie-card {
-            width: 350px;
-            height: 650px;
+            width: 300px;
+            height: 470px;
             margin-top: 30px;
-            margin-left: 20px;
-            margin-right: 50px;
+            margin-left: 15px;
+            margin-right: 30px;
             margin-bottom: 20px;
             border-style: solid;
             border-color: white;
@@ -139,8 +171,8 @@
         }
 
         .movie-header {
-            width: 300px;
-            height: 450px;
+            width: 250px;
+            height: 300px;
             background-size: cover;
             margin-left: 20px;
             margin-top: 20px;
@@ -148,15 +180,38 @@
         }
 
         .movie-info {
-            width: 300px;
+            width: 250px;
             height: 140px;
             color: honeydew;
             margin-top: 10px;
             margin-left: 20px;
-            font-family: 'Do Hyeon', sans-serif;
+            font-family: 'Jua', sans-serif;
         }
+
+        .card-title {
+            font-size: 20px;
+        }
+
+        a {
+            text-decoration: none !important;
+            color:inherit;
+        }
+
+        a:hover{
+            color: lightcoral;
+        }
+
         .card-deck {
             margin-left: 30px;
+        }
+
+        .hero {
+            width: 1675px;
+            height: 150px;
+            border-radius: 10px;
+            border-color:lightblue;
+            border-style: solid;
+            text-align: center;
         }
     </style>
 
@@ -167,13 +222,37 @@
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
                 <img src="https://ifh.cc/g/rvOiKR.png" height="100" width="50">
-                <strong class="is-sparta" style="font-family: 'Stylish', sans-serif;font-size: larger;">Hanghae
+                <strong class="is-hanghae" style="font-family: 'Stylish', sans-serif;font-size: larger;">Hanghae
                     Movie</strong>
             </a>
         </div>
+        <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="field is-grouped">
+                <p class="control">
+                  <a class="button is-info is-light">
+                    <span class="icon">
+                      <i class="fa fa-space-shuttle"></i>
+                    </span>
+                    <span>
+                      Name
+                    </span>
+                  </a>
+                </p>
+                <p class="control">
+                  <a class="button is-danger" href="#">
+                    <span class="icon">
+                      <i class="fa fa-sign-out"></i>
+                    </span>
+                    <span>Log-Out</span>
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
     </nav>
     <div class="card-section">
-        <span class="tag is-info" style="width: 150px;height: 30px;font-size: 15px;">Ranking Movies</span>
+        <span class="tag is-info" style="width: 200px;height: 30px;font-size: 20px;">Recommand Movies</span>
     </div>
         <div class="card-deck" id="cards">
             <div class="movie-card">
@@ -190,12 +269,22 @@
             </div>
         </div>
     <div class="search-section">
-        <span class="tag is-info" style="width: 150px;height: 30px;font-size: 15px;">Search Movies</span>
+        <section class="hero">
+            <div class="hero-body">
+              <p class="title" style="color: lightblue;font-size: 50px;">
+                찾고싶은 영화가 있나요?🎞
+              </p>
+            </div>
+          </section>
         <div class="search-box">
-            <input type="text" class="search-txt" id="search_text" placeholder="찾는 영화를 입력하세요">
-            <button type="button" class="btn btn-danger" onclick="">🎥</button>
+            <input type="text" class="search-txt" id="search_text" placeholder="영화제목을 입력하세요">
+            <button type="button" class="btn btn-danger" onclick="search_movie()">🔍</button>
+        </div>
+        <div class="card-decks" id="search-card">
+
         </div>
     </div>
+    
 </body>
 
 </html>
