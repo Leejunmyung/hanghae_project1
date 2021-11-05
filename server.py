@@ -21,11 +21,11 @@ db = client.dbsparta_plus
 @app.route('/')
 def home():
     token_receive = request.cookies.get('mytoken')
-    movies = list(db.movies.find({}, {'_id': False}))
+    movies = list(db.hangmovies.find({}, {'_id': False}))
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-
-        return render_template('main.html', movies=movies)
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('main.html', movies=movies, user_info=user_info)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
@@ -37,11 +37,40 @@ def login():
     msg = request.args.get("msg")
     return render_template('hlogin.html', msg=msg)
 
+
 @app.route('/detail/<name>')
 def detail(name): # 영화목록 api
-    movies = db.movies.find_one({'name':name}, {'_id':False})
-    return render_template('detail.html', movies=movies)
+    token_receive = request.cookies.get('mytoken')
+    movies = db.hangmovies.find_one({'name': name}, {'_id': False})
+    reviews = list(db.posts.find({'title': name}, {'_id': False}))
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('detail.html', movies=movies, reviews=reviews, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
 
+
+@app.route('/posting', methods=['POST'])
+def posting(): # 영화포스팅
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+        user_info = db.users.find_one({'username' : payload['id']})
+        comment_receive = request.form['comment_give']
+        date_receive = request.form['date_give']
+        title_receive = request.form['title_give']
+        doc = {
+            "username" : user_info['username'],
+            "comment" : comment_receive,
+            "date" : date_receive,
+            "title" : title_receive
+        }
+        db.posts.insert_one(doc)
+        return jsonify({"result": "success", 'msg' : '등록 완료!'})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("home"))
 
 
 @app.route('/sign_in', methods=['POST'])
@@ -89,19 +118,6 @@ def check_dup(): # 아이디 중복확인
     username_receive = request.form['username_give']
     exists = bool(db.users.find_one({"username": username_receive}))
     return jsonify({'result': 'success', 'exists': exists})
-
-
-# @app.route('/detail')
-# def get_movies():
-#     get = request.args.get('movie',type=str)
-#     movies = db.movies.find_one({'name':get}, {'_id':False})
-#     return render_template('detail.html', movies=movies)
-
-
-# @app.route('/api/search')
-# def search_movies():
-#     searchmovie = list(db.movies.find({}, {'_id':False}))
-#     return render_template("detail.html", searchmovie=searchmovie)
 
 
 if __name__ == '__main__':

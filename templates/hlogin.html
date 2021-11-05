@@ -106,7 +106,7 @@
             } else {
                 $("#help-password3").text("사용할 수 있는 이메일입니다.").removeClass("is-danger").addClass("is-success")
             }
-            
+
             $.ajax({
                 type: "POST",
                 url: "/sign_up/save",
@@ -324,14 +324,13 @@
                             <div class="mb-5">
                                 <div class="field">
                                     <div class="control has-icons-left" style="width:100%">
-                                        <input id="input-email" class="input" type="text"
-                                            placeholder="이메일">
+                                        <input id="input-email" class="input" type="text" placeholder="이메일">
                                         <span class="icon is-small is-left"><i class="fa fa-envelope"></i></span>
                                     </div>
                                     <p id="help-password3" class="help is-hidden">'@'를 포함한 이메일을 입력해주세요</p>
                                 </div>
                             </div>
-                            
+
                             <nav class="level is-mobile">
                                 <button class="level-item button is-sparta" onclick="sign_up()">
                                     회원가입
