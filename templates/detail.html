@@ -3,73 +3,80 @@
 
 <head>
 
-  <!-- Webpage Title -->
-  <title>Detail | HanghaeMovie</title>
+    <!-- Webpage Title -->
+    <title>Detail | HanghaeMovie</title>
 
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <!-- Bulma CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
-  <!-- Font Awesome CSS -->
-  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <!-- google font-->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Black+And+White+Picture&family=Do+Hyeon&family=Gugi&family=Jua&display=swap"
-    rel="stylesheet">
-  <!-- JS -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- Font Awesome CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Black+And+White+Picture&family=Do+Hyeon&family=Gugi&family=Jua&display=swap"
+            rel="stylesheet">
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
 
-  <script>
+    <script>
 
-    $(document).ready(function () {
-      show_detail();
+        $(document).ready(function () { // 페이지가 로딩될때마다 실행
+            show_detail();
 
-    });
+        });
 
-    function log_out() {
-
-      $.removeCookie('mytoken', { path: '/' });
-      alert('로그아웃!')
-      window.location.href = "/login"
-    }
-
-    let title = {{ movies['name']| tojson }};
-    let details = {{ movies| tojson }};
-
+        // 로그아웃
+        function log_out() {
+            // 쿠키에서 mytoken을 지운다
+            $.removeCookie('mytoken', {path: '/'});
+            alert('로그아웃!')
+            // 로그인 페이지로 이동
+            window.location.href = "/login"
+        }
 
 
-    function show_detail() {
-      $('#backimage').empty();
-      $('#detail').empty();
-      $('#orders-box').empty();
-      let reviews = {{ reviews| tojson
-    }};
+        // 서버에서 보낸 정보들을 json 형식으로 변수에 저장
+        let title = {{ movies['name']| tojson }};
+        let details = {{ movies| tojson }};
 
-    for (let i = 0; i < reviews.length; i++) {
-      let user = reviews[i]['username']
-      let comment = reviews[i]['comment']
-      let date = reviews[i]['date']
-      let getreview = `<tr>
+
+        // 영화 상세 정보 표시 함수
+        function show_detail() {
+            $('#backimage').empty();
+            $('#detail').empty();
+            $('#orders-box').empty();
+
+            // 리뷰정보 json 변환 후 변수저장
+            let reviews = {{ reviews | tojson }};
+
+            // 반복문을 통해 리뷰들을 표기한다
+            for (let i = 0; i < reviews.length; i++) {
+                let user = reviews[i]['username']
+                let comment = reviews[i]['comment']
+                let date = reviews[i]['date']
+                let getreview = `<tr>
                        <th scope="col" style="color:honeydew;">${user}</th>
                        <th scope="col" style="color:honeydew;">${comment}</th>
                        <th scope="col" style="color:honeydew;">${date}</th>
                        </tr>`
-      $('#orders-box').append(getreview);
-    }
+                $('#orders-box').append(getreview);
+            }
 
-    let back_img = `<div class="back" style="background: url(${details["img_url"]}) no-repeat center;"></div>`
-    let card = `<div style="float: left;"><img class="movie-poster" src="${details["img_url"]}" alt=""></div>
+            // jinja2 문법을 이용하여 상세 페이지 표기
+            let back_img = `<div class="back" style="background: url(${details["img_url"]}) no-repeat center;"></div>`
+            let card = `<div style="float: left;"><img class="movie-poster" src="${details["img_url"]}" alt=""></div>
       <div class="movie-details-content ml-5 text-light" id="about" style="float: left;">
         <span class="detail-title" style="font-size: 40px;">${details['name']}</span><span class="detail-date"
           style="font-size: 20px; margin-left: 15px;">${details['dates']}</span>
@@ -90,207 +97,207 @@
       </div>`
 
 
+            $('#backimage').append(back_img);
+            $('#detail').append(card);
 
-    $('#backimage').append(back_img);
-    $('#detail').append(card);
-      
-    }
-
-    function post() {
-
-      let comment = $("#movie-review").val()
-      let today = new Date().toLocaleString()
-      console.log(title, today, comment)
-      $.ajax({
-        type: "POST",
-        url: "/posting",
-        data: { comment_give: comment, date_give: today, title_give: title },
-        success: function (response) {
-          alert('성공')
-          window.location.reload()
         }
-      })
-    }
 
-  </script>
-  <style>
-    body {
-      background-color: black;
-      min-height: 100vh;
-      padding-top: 3.25rem;
-      padding-bottom: 400px;
-    }
+        // 리뷰 달기 함수
+        function post() {
+            // 리뷰내용, 날짜 input 박스에서 값 가져오기
+            let comment = $("#movie-review").val()
+            let today = new Date().toLocaleString()
+            // 리뷰내용, 날짜, 영화제목 서버에 보내주기
+            $.ajax({
+                type: "POST",
+                url: "/posting",
+                data: {comment_give: comment, date_give: today, title_give: title},
+                success: function (response) {
+                    alert('성공')
+                    window.location.reload()
+                }
+            })
+        }
 
-    .wrap {
-      width: auto;
-    }
+    </script>
+    <style>
+        body {
+            background-color: black;
+            min-height: 100vh;
+            padding-top: 3.25rem;
+            padding-bottom: 400px;
+        }
 
-    .section {
-      padding: 1rem 1.5rem;
-      max-width: 750px;
-      margin: auto;
-    }
+        .wrap {
+            width: auto;
+        }
 
-    .is-hanghae {
-      color: whitesmoke !important;
-    }
+        .section {
+            padding: 1rem 1.5rem;
+            max-width: 750px;
+            margin: auto;
+        }
+
+        .is-hanghae {
+            color: whitesmoke !important;
+        }
 
 
-    .modal-content {
-      width: 600px;
-      max-width: 80%;
-    }
+        .modal-content {
+            width: 600px;
+            max-width: 80%;
+        }
 
-    input::-webkit-calendar-picker-indicator {
-      display: none;
-    }
+        input::-webkit-calendar-picker-indicator {
+            display: none;
+        }
 
-    .image img {
-      object-fit: cover;
-      width: 100%;
-      height: 100%;
-    }
+        .image img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
 
-    .back {
-      background-size: cover;
-      clip-path: ellipse(1800px 600px at 10% 0%);
-      width: 100%;
-      height: 400px;
-    }
+        .back {
+            background-size: cover;
+            clip-path: ellipse(1800px 600px at 10% 0%);
+            width: 100%;
+            height: 400px;
+        }
 
-    .back::before {
-      position: absolute;
-      content: '';
-      background: -webkit-gradient(linear, left bottom, left top, from(rgb(0, 0, 0)), to(transparent));
-      background: linear-gradient(to top, rgb(0, 0, 0), transparent);
-      width: 100%;
-      height: 100%;
+        .back::before {
+            position: absolute;
+            content: '';
+            background: -webkit-gradient(linear, left bottom, left top, from(rgb(0, 0, 0)), to(transparent));
+            background: linear-gradient(to top, rgb(0, 0, 0), transparent);
+            width: 100%;
+            height: 100%;
 
-    }
+        }
 
-    .back::after {
-      position: absolute;
-      content: '';
-      background: -webkit-gradient(linear, left bottom, left top, from(rgb(0, 0, 0)), to(transparent));
-      background: linear-gradient(to top, rgb(0, 0, 0), transparent);
-      width: 100%;
-      height: 100%;
+        .back::after {
+            position: absolute;
+            content: '';
+            background: -webkit-gradient(linear, left bottom, left top, from(rgb(0, 0, 0)), to(transparent));
+            background: linear-gradient(to top, rgb(0, 0, 0), transparent);
+            width: 100%;
+            height: 100%;
 
-    }
+        }
 
-    .movie-poster {
-      width: 330px;
-      height: 450px;
-    }
+        .movie-poster {
+            width: 330px;
+            height: 450px;
+        }
 
-    #detail {
-      position: relative;
-      margin-left: 430px;
-    }
+        #detail {
+            position: relative;
+            margin-left: 430px;
+        }
 
-    #about {
-      width: 650px;
-    }
+        #about {
+            width: 650px;
+        }
 
-    .review-box {
-      width: 1000px;
-      margin-top: 150px;
-      margin-left: 450px;
-    }
+        .review-box {
+            width: 1000px;
+            margin-top: 150px;
+            margin-left: 450px;
+        }
 
-    .input {
-      width: 800px;
-      background-color: white;
-      background-size: cover;
-      color: black;
-    }
+        .input {
+            width: 800px;
+            background-color: white;
+            background-size: cover;
+            color: black;
+        }
 
-    input::placeholder {
-      font-weight: bold;
-    }
+        input::placeholder {
+            font-weight: bold;
+        }
 
-    .s-line {
-      height: 1px;
-      margin-top: 120px;
-      background-color: dimgray;
-    }
+        .s-line {
+            height: 1px;
+            margin-top: 120px;
+            background-color: dimgray;
+        }
 
-    .table {
-      margin-top: 40px;
-      background-color: black;
-      border-collapse: separate;
-      border-spacing: 0 40px;
-    }
-  </style>
+        .table {
+            margin-top: 40px;
+            background-color: black;
+            border-collapse: separate;
+            border-spacing: 0 40px;
+        }
+    </style>
 
 </head>
 
 <body class="wrap">
-  <nav class="navbar is-fixed-top is-black" role="navigation" aria-label="main navigation">
+<nav class="navbar is-fixed-top is-black" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="/">
-        <img src="https://ifh.cc/g/rvOiKR.png" height="100" width="50">
-        <strong class="is-hanghae" style="font-family: 'Stylish', sans-serif;font-size: larger;">Hanghae
-          Movie</strong>
-      </a>
+        <a class="navbar-item" href="/">
+            <img src="https://ifh.cc/g/rvOiKR.png" height="100" width="50">
+            <strong class="is-hanghae" style="font-family: 'Stylish', sans-serif;font-size: larger;">Hanghae
+                Movie</strong>
+        </a>
     </div>
     <div class="navbar-end">
-      <div class="navbar-item">
-        <div class="field is-grouped">
-          <p class="control">
-            <a class="button is-info is-outlined">
+        <div class="navbar-item">
+            <div class="field is-grouped">
+                <p class="control">
+                    <a class="button is-info is-outlined">
               <span class="icon">
                 <i class="fa fa-space-shuttle"></i>
               </span>
-              <span>
+                        <span>
                 {{ user_info['username'] }}
               </span>
-            </a>
-          </p>
-          <p class="control">
-            <a class="button is-danger is-outlined" href="#" onclick="log_out()">
+                    </a>
+                </p>
+                <p class="control">
+                    <a class="button is-danger is-outlined" href="#" onclick="log_out()">
               <span class="icon">
                 <i class="fa fa-sign-out"></i>
               </span>
-              <span>Log-Out</span>
-            </a>
-          </p>
+                        <span>Log-Out</span>
+                    </a>
+                </p>
+            </div>
         </div>
-      </div>
     </div>
-  </nav>
-  <div class="container-fluid">
+</nav>
+<div class="container-fluid">
     <div class="row" id="backimage">
-      <div class="back" style="background: url(https://ifh.cc/g/gaxR11.jpg) no-repeat center;"></div>
+        <div class="back" style="background: url(https://ifh.cc/g/gaxR11.jpg) no-repeat center;"></div>
     </div>
     <div class="row" id="detail">
-      <div style="float: left;"><img class="movie-poster" src="https://ifh.cc/g/gaxR11.jpg" alt=""></div>
-      <div class="movie-details-content ml-5 text-light" id="about" style="float: left;">
-        <span class="detail-title" style="font-size: 40px;">인터스텔라</span><span class="detail-date"
-          style="font-size: 20px; margin-left: 15px;">2021-11-05</span>
-        <p></p>
-        <span class="badge bg-secondary">15세 관람가</span>
-        <span class="badge bg-success">미국</span>
-        <span class="badge bg-danger">97분</span>
-        <span class="badge bg-warning">액션,SF,스릴러</span>
+        <div style="float: left;"><img class="movie-poster" src="https://ifh.cc/g/gaxR11.jpg" alt=""></div>
+        <div class="movie-details-content ml-5 text-light" id="about" style="float: left;">
+            <span class="detail-title" style="font-size: 40px;">인터스텔라</span><span class="detail-date"
+                                                                                  style="font-size: 20px; margin-left: 15px;">2021-11-05</span>
+            <p></p>
+            <span class="badge bg-secondary">15세 관람가</span>
+            <span class="badge bg-success">미국</span>
+            <span class="badge bg-danger">97분</span>
+            <span class="badge bg-warning">액션,SF,스릴러</span>
 
-        <hr>
-        <p style="color: gray; ">평점 : 9.8</p>
-        <p style="color: gray; margin-top: 15px;">출연 : 톰 하디</p>
-        <p style="color: gray; margin-top: 15px;">감독 : 엔디 서키스</p>
-        <p style="color: gray; margin-top: 15px;">누적관객 : 2,030,366명</p>
-        <h3 style="color: lightgray; margin-top: 15px; font-size: 20px;">Overview</h3>
-        <p style="color: gray; white-space: normal;">히어로의 시대는 끝났다
-          ‘베놈’과 완벽한 파트너가 된 ‘에디 브록’(톰 하디) 앞에 ‘클리터스 캐서디’(우디 해럴슨)가 ‘카니지’로 등장,
-          앞으로 닥칠 대혼돈의 세상을 예고한다.
-          대혼돈의 시대가 시작되고,
-          악을 악으로 처단할 것인가?</p>
-        <a href="#" class="nav-link btn border border-dark text-muted" style="margin-top: 20px;">Trailer</a>
-      </div>
+            <hr>
+            <p style="color: gray; ">평점 : 9.8</p>
+            <p style="color: gray; margin-top: 15px;">출연 : 톰 하디</p>
+            <p style="color: gray; margin-top: 15px;">감독 : 엔디 서키스</p>
+            <p style="color: gray; margin-top: 15px;">누적관객 : 2,030,366명</p>
+            <h3 style="color: lightgray; margin-top: 15px; font-size: 20px;">Overview</h3>
+            <p style="color: gray; white-space: normal;">히어로의 시대는 끝났다
+                ‘베놈’과 완벽한 파트너가 된 ‘에디 브록’(톰 하디) 앞에 ‘클리터스 캐서디’(우디 해럴슨)가 ‘카니지’로 등장,
+                앞으로 닥칠 대혼돈의 세상을 예고한다.
+                대혼돈의 시대가 시작되고,
+                악을 악으로 처단할 것인가?</p>
+            <a href="#" class="nav-link btn border border-dark text-muted" style="margin-top: 20px;">Trailer</a>
+        </div>
     </div>
     <hr class="s-line">
-  </div>
-  <div class="review-box">
+</div>
+<div class="review-box">
     <span class="control has-icons-left">
       <input class="input" id="movie-review" type="text" placeholder="리뷰등록">
       <span class="icon is-small is-left">
@@ -306,22 +313,22 @@
       </button>
     </span>
     <table class="table">
-      <thead>
+        <thead>
         <tr>
-          <th scope="col" style="color:honeydew;">닉네임</th>
-          <th scope="col" style="color:honeydew;">댓글</th>
-          <th scope="col" style="color:honeydew;">작성일자</th>
+            <th scope="col" style="color:honeydew;">닉네임</th>
+            <th scope="col" style="color:honeydew;">댓글</th>
+            <th scope="col" style="color:honeydew;">작성일자</th>
         </tr>
-      </thead>
-      <tbody id="orders-box">
+        </thead>
+        <tbody id="orders-box">
         <tr>
-          <th scope="col" style="color:honeydew;">닉네임</th>
-          <th scope="col" style="color:honeydew;">하이</th>
-          <th scope="col" style="color:honeydew;">작성일자</th>
+            <th scope="col" style="color:honeydew;">닉네임</th>
+            <th scope="col" style="color:honeydew;">하이</th>
+            <th scope="col" style="color:honeydew;">작성일자</th>
         </tr>
-      </tbody>
+        </tbody>
     </table>
-  </div>
+</div>
 
 
 </body>

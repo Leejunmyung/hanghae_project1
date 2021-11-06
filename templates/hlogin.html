@@ -20,25 +20,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <script>
+        // 로그인 함수
         function sign_in() {
+            // input입력란의  username, password 값 변수에 담기
             let username = $("#input-username").val()
             let password = $("#input-password").val()
 
+            // username의 값이 빈값이면
             if (username == "") {
+                // text 띄워주기
                 $("#help-id-login").text("아이디를 입력해주세요.")
-                $("#input-username").focus()
+                $("#input-username").focus() // input 칸 강조
                 return;
             } else {
                 $("#help-id-login").text("")
             }
-
+            // password 값이 빈값이면
             if (password == "") {
+                // text 띄우기
                 $("#help-password-login").text("비밀번호를 입력해주세요.")
                 $("#input-password").focus()
                 return;
             } else {
                 $("#help-password-login").text("")
             }
+
+            // 로그인 api에 username 과 password 정보를 보내준다
             $.ajax({
                 type: "POST",
                 url: "/sign_in",
@@ -47,8 +54,10 @@
                     password_give: password
                 },
                 success: function (response) {
+                    // 로그인을 성공하면
                     if (response['result'] == 'success') {
-                        $.cookie('mytoken', response['token'], { path: '/' });
+                        // 쿠키에 토큰 정보를 담아서 로그인 페이지로 이동
+                        $.cookie('mytoken', response['token'], {path: '/'});
                         window.location.replace("/")
                     } else {
                         alert(response['msg'])
@@ -57,56 +66,77 @@
             });
         }
 
+        // 회원가입 함수
         function sign_up() {
+            // 회원가입 input 값들을 변수에 담아준다
             let username = $("#input-username").val()
             let password = $("#input-password").val()
             let password2 = $("#input-password2").val()
             let email = $('#input-email').val()
-            console.log(username, password, password2, email)
 
-
+            // id의 input칸 밑에 글자가 빨간색이면 alert창을 띄워준다
             if ($("#help-id").hasClass("is-danger")) {
                 alert("아이디를 다시 확인해주세요.")
                 return;
+                // id의 input칸 밑에 글자가 초록색이면 alert창을 띄워준다
             } else if (!$("#help-id").hasClass("is-success")) {
                 alert("아이디 중복확인을 해주세요.")
                 return;
             }
 
+            // password 가 빈값이면
             if (password == "") {
+                // password input 칸 밑에 빨간색 text 문자가 나온다
                 $("#help-password").text("비밀번호를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
                 $("#input-password").focus()
                 return;
+                // is_password(올바른 이메일형식) 와 입력한 password 값이 다르면
             } else if (!is_password(password)) {
+                // 빨간색 text 띄우기
                 $("#help-password").text("비밀번호의 형식을 확인해주세요. 영문과 숫자 필수 포함, 특수문자(!@#$%^&*) 사용가능 8-20자").removeClass("is-safe").addClass("is-danger")
                 $("#input-password").focus()
                 return
+                // 위 두가지 조건을 통과하면 초록색 text 띄우기
             } else {
                 $("#help-password").text("사용할 수 있는 비밀번호입니다.").removeClass("is-danger").addClass("is-success")
             }
+
+            // password2 값이 빈값이면
             if (password2 == "") {
+                // 빨간색 text 띄우기
                 $("#help-password2").text("비밀번호를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
                 $("#input-password2").focus()
                 return;
+                // password 와 password2 값이 다르면
             } else if (password2 != password) {
+                // 빨간색 text 띄우기
                 $("#help-password2").text("비밀번호가 일치하지 않습니다.").removeClass("is-safe").addClass("is-danger")
                 $("#input-password2").focus()
                 return;
+                // password 와 password2 값이 같으면
             } else {
+                // 초록색 text 띄우기
                 $("#help-password2").text("비밀번호가 일치합니다.").removeClass("is-danger").addClass("is-success")
             }
+            // 만약 email 값이 빈값이면
             if (email == "") {
+                // 빨간색 text 띄우기
                 $("#help-password3").text("이메일를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
                 $("#input-email").focus()
                 return;
+                // is_email(올바른 이메일 형식)과 입력한 email과 다르면
             } else if (!is_email(email)) {
+                // 빨간색 text 띄우기
                 $('#help-password3').text("이메일 형식을 확인해주세요. '@' 필수 포함").removeClass("is-safe").addClass("is-danger")
                 $("#input-email").focus()
                 return;
+                // is_email(올바은 이메일 형식)에 부합하면
             } else {
+                // 초록색 text 띄우기
                 $("#help-password3").text("사용할 수 있는 이메일입니다.").removeClass("is-danger").addClass("is-success")
             }
 
+            // 회원가입 api에 data정보를 전달
             $.ajax({
                 type: "POST",
                 url: "/sign_up/save",
@@ -123,7 +153,9 @@
 
         }
 
+        // 숨김 기능
         function toggle_sign_up() {
+            // 해당 아이디들을  숨겨준다
             $("#sign-up-box").toggleClass("is-hidden")
             $("#div-sign-in-or-up").toggleClass("is-hidden")
             $("#btn-check-dup").toggleClass("is-hidden")
@@ -133,35 +165,46 @@
             $("#help-password3").toggleClass("is-hidden")
         }
 
+        // 올바른 닉네임 형식을 정의해 변수에 넣어준다
         function is_nickname(asValue) {
             var regExp = /^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{2,10}$/;
             return regExp.test(asValue);
         }
 
+        // 올바른 패스워드 형식을 정의해 변수에 넣어준다
         function is_password(asValue) {
             var regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,20}$/;
             return regExp.test(asValue);
         }
 
+        // 올바른 이메일 형식을 정의해 변수에 넣어준다
         function is_email(asValue) {
             var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
             return regExp.test(asValue);
         }
 
+        // 중복 확인
         function check_dup() {
+            // 입력한 username 값을 변수에 담는다
             let username = $("#input-username").val()
             console.log(username)
+            // username 값이 빈값이면
             if (username == "") {
+                // 빨간색 text를 띄워준다
                 $("#help-id").text("아이디를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
                 $("#input-username").focus()
                 return;
             }
+            // is_nickname(올바른 닉네임 형식)과 입력한 username이 맞지 않다면
             if (!is_nickname(username)) {
+                // 빨간색 text 띄우기
                 $("#help-id").text("아이디의 형식을 확인해주세요. 영문과 숫자, 일부 특수문자(._-) 사용 가능. 2-10자 길이").removeClass("is-safe").addClass("is-danger")
                 $("#input-username").focus()
                 return;
             }
             $("#help-id").addClass("is-loading")
+
+            // 중복확인 api에 입력한 username 전송
             $.ajax({
                 type: "POST",
                 url: "/sign_up/check_dup",
@@ -169,11 +212,14 @@
                     username_give: username
                 },
                 success: function (response) {
-
+                    // db에 username과 전송한 username이 같으면 false로 exists에 담겨서 온다
+                    // 만약 exists가 False면
                     if (response["exists"]) {
+                        // 빨간색 text 띄우기
                         $("#help-id").text("이미 존재하는 아이디입니다.").removeClass("is-safe").addClass("is-danger")
                         $("#input-username").focus()
                     } else {
+                        // 아니면 초록색 text 띄우기
                         $("#help-id").text("사용할 수 있는 아이디입니다.").removeClass("is-danger").addClass("is-success")
                     }
                     $("#help-id").removeClass("is-loading")
@@ -256,98 +302,98 @@
 </head>
 
 <body>
-    <section class="section">
-        <div class="container">
-            <div class="box" style="max-width: 480px;">
-                <div class="icons">
-                    <img src="https://ifh.cc/g/rvOiKR.png" height="100" width="140">
-                    <p class="title is-1 is-spaced">Hanghae Movie</p>
-                </div>
-                <article class="media">
-                    <div class="media-content">
-                        <div class="content">
-                            <div class="field has-addons">
-                                <div class="control has-icons-left" style="width:100%">
-                                    <input id="input-username" class="input" type="text" placeholder="아이디">
-                                    <span class="icon is-small is-left"><i class="fa fa-user"></i></span>
-                                </div>
-                                <div id="btn-check-dup" class="control is-hidden">
-                                    <button class="button is-sparta" onclick="check_dup()">중복확인</button>
-                                </div>
-
+<section class="section">
+    <div class="container">
+        <div class="box" style="max-width: 480px;">
+            <div class="icons">
+                <img src="https://ifh.cc/g/rvOiKR.png" height="100" width="140">
+                <p class="title is-1 is-spaced">Hanghae Movie</p>
+            </div>
+            <article class="media">
+                <div class="media-content">
+                    <div class="content">
+                        <div class="field has-addons">
+                            <div class="control has-icons-left" style="width:100%">
+                                <input id="input-username" class="input" type="text" placeholder="아이디">
+                                <span class="icon is-small is-left"><i class="fa fa-user"></i></span>
                             </div>
-                            <p id="help-id" class="help is-hidden">아이디는 2-10자의 영문과 숫자와 일부 특수문자(._-)만 입력 가능합니다.</p>
-                            <p id="help-id-login" class="help is-danger"></p>
-
-                            <div class="field">
-                                <div class="control has-icons-left">
-                                    <input id="input-password" class="input" type="password" placeholder="비밀번호">
-                                    <span class="icon is-small is-left"><i class="fa fa-lock"></i></span>
-                                </div>
-                                <p id="help-password" class="help is-hidden">영문과 숫자 조합의 8-20자의 비밀번호를 설정해주세요.
-                                    특수문자(!@#$%^&*)도 사용
-                                    가능합니다.</p>
+                            <div id="btn-check-dup" class="control is-hidden">
+                                <button class="button is-sparta" onclick="check_dup()">중복확인</button>
                             </div>
-
 
                         </div>
-                        <div id="div-sign-in-or-up" class="has-text-centered">
-                            <nav class="level is-mobile">
-                                <button class="level-item button is-sparta" style="margin-top:20px;"
-                                    onclick="sign_in()">
-                                    로그인
-                                </button>
+                        <p id="help-id" class="help is-hidden">아이디는 2-10자의 영문과 숫자와 일부 특수문자(._-)만 입력 가능합니다.</p>
+                        <p id="help-id-login" class="help is-danger"></p>
 
-                            </nav>
-                            <hr>
-                            <h4 class="mb-3">아직 회원이 아니라면</h4>
-                            <nav class="level is-mobile">
-
-                                <button class="level-item button is-sparta is-outlined" onclick="toggle_sign_up()">
-                                    회원가입하기
-                                </button>
-                            </nav>
-                        </div>
-
-                        <div id="sign-up-box" class="is-hidden">
-                            <div class="mb-5">
-                                <div class="field">
-                                    <div class="control has-icons-left" style="width:100%">
-                                        <input id="input-password2" class="input" type="password"
-                                            placeholder="비밀번호 재입력">
-                                        <span class="icon is-small is-left"><i class="fa fa-lock"></i></span>
-                                    </div>
-                                    <p id="help-password2" class="help is-hidden">비밀번호를 다시 한 번 입력해주세요.</p>
-
-                                </div>
+                        <div class="field">
+                            <div class="control has-icons-left">
+                                <input id="input-password" class="input" type="password" placeholder="비밀번호">
+                                <span class="icon is-small is-left"><i class="fa fa-lock"></i></span>
                             </div>
-                            <div class="mb-5">
-                                <div class="field">
-                                    <div class="control has-icons-left" style="width:100%">
-                                        <input id="input-email" class="input" type="text" placeholder="이메일">
-                                        <span class="icon is-small is-left"><i class="fa fa-envelope"></i></span>
-                                    </div>
-                                    <p id="help-password3" class="help is-hidden">'@'를 포함한 이메일을 입력해주세요</p>
-                                </div>
-                            </div>
-
-                            <nav class="level is-mobile">
-                                <button class="level-item button is-sparta" onclick="sign_up()">
-                                    회원가입
-                                </button>
-                                <button class="level-item button is-sparta is-outlined" onclick="toggle_sign_up()">
-                                    취소
-                                </button>
-                            </nav>
+                            <p id="help-password" class="help is-hidden">영문과 숫자 조합의 8-20자의 비밀번호를 설정해주세요.
+                                특수문자(!@#$%^&*)도 사용
+                                가능합니다.</p>
                         </div>
 
 
                     </div>
-                </article>
-            </div>
+                    <div id="div-sign-in-or-up" class="has-text-centered">
+                        <nav class="level is-mobile">
+                            <button class="level-item button is-sparta" style="margin-top:20px;"
+                                    onclick="sign_in()">
+                                로그인
+                            </button>
 
+                        </nav>
+                        <hr>
+                        <h4 class="mb-3">아직 회원이 아니라면</h4>
+                        <nav class="level is-mobile">
+
+                            <button class="level-item button is-sparta is-outlined" onclick="toggle_sign_up()">
+                                회원가입하기
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div id="sign-up-box" class="is-hidden">
+                        <div class="mb-5">
+                            <div class="field">
+                                <div class="control has-icons-left" style="width:100%">
+                                    <input id="input-password2" class="input" type="password"
+                                           placeholder="비밀번호 재입력">
+                                    <span class="icon is-small is-left"><i class="fa fa-lock"></i></span>
+                                </div>
+                                <p id="help-password2" class="help is-hidden">비밀번호를 다시 한 번 입력해주세요.</p>
+
+                            </div>
+                        </div>
+                        <div class="mb-5">
+                            <div class="field">
+                                <div class="control has-icons-left" style="width:100%">
+                                    <input id="input-email" class="input" type="text" placeholder="이메일">
+                                    <span class="icon is-small is-left"><i class="fa fa-envelope"></i></span>
+                                </div>
+                                <p id="help-password3" class="help is-hidden">'@'를 포함한 이메일을 입력해주세요</p>
+                            </div>
+                        </div>
+
+                        <nav class="level is-mobile">
+                            <button class="level-item button is-sparta" onclick="sign_up()">
+                                회원가입
+                            </button>
+                            <button class="level-item button is-sparta is-outlined" onclick="toggle_sign_up()">
+                                취소
+                            </button>
+                        </nav>
+                    </div>
+
+
+                </div>
+            </article>
         </div>
-    </section>
+
+    </div>
+</section>
 </body>
 
 </html>
