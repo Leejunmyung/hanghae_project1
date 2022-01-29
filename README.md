@@ -24,6 +24,7 @@
 - BeautifulSoup
   
 (Front-end)
+- javascript
 - JQuery
 - Bulma
 - Bootstrap
